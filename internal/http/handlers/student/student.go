@@ -110,3 +110,18 @@ func UpdateByID(storage storage.Storage) http.HandlerFunc {
 		response.WriteJSON(w, http.StatusOK, updated)
 	}
 }
+func DeleteByID(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("deleting a student", slog.String("id", id))
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GeneralError(errors.New("id must be a valid integer")))
+			return
+		}
+
+		deleted := storage.DeleteStudentByID(intId)
+
+		response.WriteJSON(w, http.StatusOK, deleted)
+	}
+}
